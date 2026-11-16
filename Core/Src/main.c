@@ -94,6 +94,10 @@ int main(void)
   uart_transmit_str((uint8_t*)"UART Bootloader\n\r");
   uart_transmit_str((uint8_t*)"https://github.com/CJ-keane\n\r");
   uart_transmit_str((uint8_t*)"================================\n\r\n\r");
+
+  if (!HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin)) {
+    uart_transmit_str((uint8_t*)"Jumping to user application...\n\r");
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -188,15 +192,19 @@ static void MX_USART1_Init(void)
 static void MX_GPIO_Init(void)
 {
   /* USER CODE BEGIN MX_GPIO_Init_1 */
-
+  GPIO_InitTypeDef GPIO_InitStruct;
   /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
-
+  GPIO_InitStruct.Pin = KEY_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(KEY_GPIO_Port, &GPIO_InitStruct);
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
