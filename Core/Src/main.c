@@ -93,7 +93,6 @@ int main(void)
   MX_USART1_Init();
   /* USER CODE BEGIN 2 */
   UART_Init();
-  Log("Bootloader v1.0\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
