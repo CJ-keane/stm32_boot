@@ -24,6 +24,8 @@
 #include "stm32f1xx_hal_gpio.h"
 #include "iap_config.h"
 #include "uart.h"
+#include "flash_if.h"
+#include "watchdog.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -92,7 +94,11 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_Init();
   /* USER CODE BEGIN 2 */
+  FlashIf_Init();
+  WatchDog_Init(5000);
   UART_Init();
+
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,6 +109,7 @@ int main(void)
     HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LED1_GPIO_Port, LED0_Pin, GPIO_PIN_RESET);
     /* USER CODE BEGIN 3 */
+    WatchDog_Refresh();
   }
   /* USER CODE END 3 */
 }

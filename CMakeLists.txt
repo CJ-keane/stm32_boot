@@ -47,6 +47,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/uart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/flash_if.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/watchdog.c
 )
 
 # Add include paths
