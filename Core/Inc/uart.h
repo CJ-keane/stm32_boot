@@ -1,17 +1,16 @@
 #ifndef UART_H_
 #define UART_H_
 
-#include "stm32f1xx_hal.h"
+#include <stdint.h>
 
-extern USART_HandleTypeDef husart1;
+#define UART_RX_BUF_SIZE  2048
+#define UART_TX_BUF_SIZE  256
 
-typedef enum {
-    UART_OK    =  0x00U,
-    UART_ERROR =  0xFFU,
-} uart_status;
-
-uart_status uart_transmit_str(uint8_t *data);
-
-#define UART_TIMEOUT ((uint16_t)1000u)
+void UART_Init();
+void UART_PutByte(uint8_t ch);
+void UART_Write(const uint8_t *data, uint16_t len);
+int16_t UART_GetByte(uint32_t timeout_ms);
+void UART_FlushRx(void);
+void Log(const char *fmt, ...);    /* 日志输出 */
 
 #endif /* UART_H_ */

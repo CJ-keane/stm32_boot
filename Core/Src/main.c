@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32f1xx_hal_gpio.h"
+#include "iap_config.h"
 #include "uart.h"
 /* USER CODE END Includes */
 
@@ -40,7 +42,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-USART_HandleTypeDef husart1;
+UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
@@ -90,14 +92,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_Init();
   /* USER CODE BEGIN 2 */
-  uart_transmit_str((uint8_t*)"\n\r================================\n\r");
-  uart_transmit_str((uint8_t*)"UART Bootloader\n\r");
-  uart_transmit_str((uint8_t*)"https://github.com/CJ-keane\n\r");
-  uart_transmit_str((uint8_t*)"================================\n\r\n\r");
-
-  if (!HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin)) {
-    uart_transmit_str((uint8_t*)"Jumping to user application...\n\r");
-  }
+  UART_Init();
+  Log("Bootloader v1.0\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -105,7 +101,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LED1_GPIO_Port, LED0_Pin, GPIO_PIN_RESET);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -165,16 +162,15 @@ static void MX_USART1_Init(void)
   /* USER CODE BEGIN USART1_Init 1 */
 
   /* USER CODE END USART1_Init 1 */
-  husart1.Instance = USART1;
-  husart1.Init.BaudRate = 115200;
-  husart1.Init.WordLength = USART_WORDLENGTH_8B;
-  husart1.Init.StopBits = USART_STOPBITS_1;
-  husart1.Init.Parity = USART_PARITY_NONE;
-  husart1.Init.Mode = USART_MODE_TX_RX;
-  husart1.Init.CLKPolarity = USART_POLARITY_LOW;
-  husart1.Init.CLKPhase = USART_PHASE_1EDGE;
-  husart1.Init.CLKLastBit = USART_LASTBIT_DISABLE;
-  if (HAL_USART_Init(&husart1) != HAL_OK)
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -195,16 +191,32 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct;
   /* USER CODE END MX_GPIO_Init_1 */
 
+  HAL_GPIO_WritePin(GPIOB, LED0_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOE, LED1_Pin, GPIO_PIN_SET);
+
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   GPIO_InitStruct.Pin = KEY_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(KEY_GPIO_Port, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = LED0_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LED0_GPIO_Port, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = LED1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
